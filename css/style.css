@@ -1,0 +1,73 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+tr.active td {
+   background-color: #8fc3f7;
+}
+
+.topline{
+	border-top: solid;
+}
+
+td {
+    padding: 10px;
+}
+
+th{
+	text-align:center;
+}
+
+.inline {
+	display: inline;
+}
+
+tr.present {
+    background-color: #223300;
+}
+
+tr.past {
+    background-color: #5E0000;
+}
+
+* {
+    font-family: Arial;
+}
+
+.input {
+    display: inline;
+}
+
+.tooltip {
+    display: none;
+    padding: 10px;
+}
+
+.input:hover .tooltip {
+    background: white;
+    border-radius: 3px;
+    bottom: -60px;
+    color: black;
+    display: inline;
+    height: 30px;
+    left: 0;
+    line-height: 30px;
+    position: absolute;
+}
+
+.input:hover .tooltip:before {
+    display: inline;
+    content: "";
+    position: absolute;
+    top: -5px;
+    width: 0; 
+	height: 0; 
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	
+	border-bottom: 5px solid blue;
+}
