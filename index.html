@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+		<title>Shadowrun SR5 Bits</title>
+
+		<!-- Bootstrap -->
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		
+		<!-- Custom styles for this template -->
+		<link href="css/style.css" rel="stylesheet">
+
+		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+    <body>
+		<p></p>
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+		  <div class="container">
+			<div class="navbar-header">
+			  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			  </button>
+			  <a class="navbar-brand" href="#">Initiative, Ammo & Recoil Tracking</a>
+			</div>
+		  </div>
+		</nav>
+		<div class="container">
+			<table width='100%'>
+				<tr>
+					<th colspan="2">
+						<h5>Character</h5>
+					</th>
+					<th>
+						<h5>Weapons</h5>
+					</th>
+				</tr>
+				<tr class="topline">
+					<td style="width:185px">
+						<input type="text" class="form-control inline" placeholder="Player Name" style="width:120px" title="Player Name">
+						<a href="#" class="btn btn-danger btn-sm" style="width:40px" onclick="remChar(this)" title="Delete Player">-</a>
+						<input type="number" class="form-control" placeholder="Initiative" title="Current Initiative" style="width:165px">
+						<input type="number" class="form-control inline" style="width:120px" placeholder="Recoil Supp." title="Recoil Suppression (STR/3)" onblur="checkRecoil(this)">
+						<a href="#" class="btn btn-success btn-sm" data-bullets=0 data-comp=0 data-base=1 onclick="resetRecoil(this)" style="width:40px" title="Click to reset Recoil Penalty">0</a>
+					</td>
+					<td style="width:64px">
+						<div class="btn-group-vertical">
+							<a href="#" class="btn btn-primary btn-block btn-sm" onclick="dropInit(this,1)" title="Reduce Initiative by 1 (Wound Penalty)">-1</a>
+							<a href="#" class="btn btn-primary btn-block btn-sm" onclick="dropInit(this,5)" title="Reduce Initiative by 5 (Interrupt Action)">-5</a>
+							<a href="#" class="btn btn-primary btn-block btn-sm" onclick="dropInit(this,10)" title="Reduce Initiative by 10 (Interrupt Action)">-10</a>
+							<a href="#" class="btn btn-warning btn-block btn-sm disabled" onclick="nextPlayer()" title="End Turn & show next player">End</a>
+							</div><br>
+					</td>
+					<td>
+						<table>
+							<tr class="weapon">
+								<td style="text-align:center">
+									<input type="text" class="form-control inline" style="width:238px"placeholder="Weapon" title="Weapon Name">
+									<input type="number" class="form-control inline" style="width:100px"placeholder="Clip Size" title="Current Ammunition" data-max = 0>
+									<input type="number" class="form-control inline" style="width:120px" placeholder="Recoil Supp." data-fired = 'No' title="Recoil Suppression (Weapon)">
+									
+									<div class="btn-group">
+										<a href="#" class="btn btn-primary" onclick="fire(this,1)" title="Fire 1 Round (Semi-Auto / Single Shot)">1</a>
+										<a href="#" class="btn btn-primary" onclick="fire(this,3)" title="Fire 3 Round (Semi-Auto Burst / Burst Fire Simple)">3</a>
+										<a href="#" class="btn btn-primary" onclick="fire(this,6)" title="Fire 6 Round (Burst Fire Complex / Full Auto Simple)">6</a>
+										<a href="#" class="btn btn-primary" onclick="fire(this,10)" title="Fire 10 Rounds (Full Auto Complex)">10</a>
+										<a href="#" class="btn btn-primary" onclick="fire(this,20)" title="Fire 20 Rounds (Suppressing Fire)">20</a>
+										<a href="#" class="btn btn-primary" onclick="reload(this)" title="Reload Weapon">R</a>
+									</div>
+								</td>
+								<td>
+									<a href="#" class="btn btn-danger btn-block btn-sm" onclick="remWeapon(this)" title="Delete this Weapon">-</a>
+								</td>
+							</tr>
+							<tr>
+								<td colspan=2>
+									<a href="#" class="btn btn-info btn-block btn-sm" onclick="addWeapon(this)" title="Add another Weapon to this Character">+</a>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan=3>
+						<a href="#" class="btn btn-info btn-block btn-sm" onclick="addChar(this)" title="Add another Character">+</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<p></p>
+		<div style="text-align:center">
+			<a href="#" class="btn btn-primary btn-lg" onclick="newPass(this)" title="Subtracts 10 from all initiatives and returns to the top">New Initiative Pass</a>
+			<a href="#" class="btn btn-primary btn-lg" onclick="endRound(this)" title="End this round, clearing all initiative scores">End Round</a>
+			<a href="#" class="btn btn-primary btn-lg" onclick="newRound(this)" title="Starts the next round, jumping to the player with highest initiative"">Start Round</a>
+		</div>
+		<p></p>
+		<div style="text-align:center">
+			<a href="#" class="btn btn-info btn-lg" onclick="exportChars(this)" title="Save the current information as a JSON file on your hard drive">Export</a>
+
+			<label class="btn btn-info btn-lg" id="add-computer-button" for="file">Import
+			</label>
+			<input type="file" id="file" name="file" enctype="multipart/form-data" style="visibility: hidden"/>
+		</div>
+		
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="js/bootstrap.min.js"></script>
+		<script>
+		
+			function addWeapon(button){
+				table = button.parentNode.parentNode.parentNode
+				var currentrow = table.children[table.rows.length-2]
+				var newrow = currentrow.parentNode.insertRow(table.rows.length-1);
+				newrow.className = "weapon"
+				newrow.innerHTML = currentrow.innerHTML
+			}
+			
+			function remWeapon(button){
+				table = button.parentNode.parentNode.parentNode.parentNode
+				if (confirm('Remove this weapon?')){
+					if (table.rows.length > 2){
+						index = button.parentNode.parentNode.rowIndex
+						table.deleteRow(index)
+					}
+					else {
+						addWeapon(table.children[0].children[1].children[0].children[0])
+						index = button.parentNode.parentNode.rowIndex
+						table.deleteRow(index)		
+					}
+				}
+			}
+			
+			function addChar(button){
+				table = button.parentNode.parentNode.parentNode
+				
+				var currentrow = table.children[table.rows.length-2]
+				var newrow = currentrow.parentNode.insertRow(table.rows.length-1);
+				newrow.innerHTML = currentrow.innerHTML
+				newrow.className = 'topline'
+				weapons = newrow.children[2].children[0].children[0]
+				var rows = weapons.rows.length
+				if (rows > 2){
+					for (i=0;i<rows-2;i++){
+						weapons.deleteRow(0)
+					}
+				}
+			}
+			
+			function remChar(button){
+				table = button.parentNode.parentNode.parentNode.parentNode
+				if (confirm('Remove this character entirely?')){
+					if (table.rows.length > 3){
+						index = button.parentNode.parentNode.rowIndex
+						table.deleteRow(index)
+					}
+					else {
+						addChar(table.children[0].children[2].children[0].children[0])
+						index = button.parentNode.parentNode.rowIndex
+						table.deleteRow(index)		
+					}
+				}
+			}
+			
+			function dropInit(button, by){
+				var initiative =  button.parentNode.parentNode.parentNode.children[0].children[2]
+				initiative.value = initiative.value - by
+			}
+			
+			function fire(button,bullets){
+				var ammo = button.parentNode.parentNode.children[1]
+				if (ammo.value > ammo.dataset.max){
+					ammo.dataset.max = ammo.value
+				}
+				if (confirm('Fire '+bullets+' rounds?')){
+
+					ammo.value = ammo.value - bullets
+					if (bullets < 20){
+						recoil = button.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.children[0].children[4]
+						recoil.dataset.bullets = parseInt(recoil.dataset.bullets) + parseInt(bullets)
+						
+						if (ammo.parentNode.children[2].dataset.fired=='No'){
+							if (!isNaN(parseInt(ammo.parentNode.children[2].value))){
+								recoil.dataset.comp = parseInt(recoil.dataset.comp) + 
+													  parseInt(ammo.parentNode.children[2].value)
+							}
+							ammo.parentNode.children[2].dataset.fired = 'Yes'
+						}
+						
+						if (recoil.dataset.comp + recoil.dataset.base - recoil.dataset.bullets < 0){
+							recoil.innerHTML = recoil.dataset.comp  + recoil.dataset.base - recoil.dataset.bullets
+							recoil.className = 'btn btn-danger btn-sm'
+						}
+					}
+				}
+			}
+						
+			function resetRecoil(button){
+				if (button.dataset.bullets == 0 || confirm('Reset Recoil?')){
+					button.dataset.comp = button.parentNode.children[3].value
+					button.dataset.bullets = 0
+					button.innerHTML = 0
+					button.className = 'btn btn-success btn-sm'
+					weaptable = button.parentNode.parentNode.children[2].children[0]
+					for (var i = 0; i < weaptable.rows.length-1; i++){
+						row = weaptable.rows[i]
+						row.children[0].children[2].dataset.fired = 'No'
+					}
+				}
+			}
+			
+			function reload(button){
+			
+				var ammo = button.parentNode.parentNode.children[1]
+				ammo.value = ammo.dataset.max
+				
+				resetRecoil(button.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.children[0].children[4])
+			}
+			
+			function checkRecoil(field){
+				button = field.parentNode.children[4]
+				console.log(button.parentNode.children[4])
+				if (button.dataset.bullets == 0){
+					button.dataset.comp = field.value
+				}
+			}
+			
+			function newPass(button){
+				table = button.parentNode.parentNode.children[2].children[0]
+				for (var i = 1; i < table.rows.length-1; i++){
+					row = table.rows[i]
+					row.children[0].children[2].value = row.children[0].children[2].value -10
+					row.className = 'topline'
+				}
+				nextPlayer()
+			}
+			
+			function endRound(button){
+				button.parentNode.children[2].classList.remove('disabled')
+				table = button.parentNode.parentNode.children[2].children[0]
+				for (var i = 1, row; row = table.rows[i]; i++){
+					row.children[0].children[2].value = 0
+					row.className = 'topline'
+				}
+			}
+			
+			function newRound(button){
+				button.classList.add('disabled')
+				nextPlayer()
+			}
+			
+			function nextPlayer(){
+				var table = document.getElementsByTagName("BODY")[0].children[2].children[0];
+				var initiatives = []
+				for (var i = 1, row; row = table.rows[i]; i++){
+					if (row.classList.contains('topline')){					
+						initiatives.push(row.children[0].children[2].value)					
+					}
+				}
+				var max=0
+				var index = 'banana'
+				for (var j=0; j < initiatives.length;j++){
+					if (parseInt(initiatives[j]) > max &&
+						!table.rows[j+1].classList.contains('past') &&
+						!table.rows[j+1].classList.contains('present')){
+						max = parseInt(initiatives[j])
+						index = j
+					}
+				}
+				if (document.getElementsByClassName("present")[0]){
+					lastguy = document.getElementsByClassName("present")[0]
+					lastguy.classList.remove('present')
+					lastguy.classList.add('past')
+					lastguy.children[1].children[0].children[3].classList.add('disabled')
+				}
+				if (index!='banana'){
+					table.rows[index+1].classList.add('present')
+					table.rows[index+1].children[1].children[0].children[3].classList.remove('disabled')
+				}
+			}
+			
+			function exportChars(){
+				var dataset = [];
+				var table = document.getElementsByTagName("BODY")[0].children[2].children[0];
+				for (var i = 1, row; row = table.rows[i]; i++){
+					if (row.classList.contains('topline')){	
+						dataset.push({
+							"name"			:	row.children[0].children[0].value,
+							"initiative"	:	row.children[0].children[2].value,
+							"recoilsupp"	:	row.children[0].children[3].value,
+							"recoilbull"	:	row.children[0].children[4].dataset.bullets,
+							"recoilcomp"	:	row.children[0].children[4].dataset.comp,
+							"weapon"		:	[]
+						})
+						var weaptable = row.children[2].children[0]
+						for (var j = 0, weaprow; weaprow = weaptable.rows[j]; j++){
+							if (weaprow.className == "weapon"){
+								dataset[i-1].weapon.push({
+									"weapname"		:	weaprow.children[0].children[0].value,
+									"rounds"		:	weaprow.children[0].children[1].value,
+									"weaprecoil"	:	weaprow.children[0].children[2].value,
+									"clipsize"		:	weaprow.children[0].children[1].dataset.max
+								})
+							}
+						}		
+					}
+				}
+				outputJSON = JSON.stringify(dataset, null, "\t")
+
+				var element = document.createElement('a');
+				element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(outputJSON));
+				element.setAttribute('download', 'ShadowrunTracker.json');
+				element.style.display = 'none';
+				document.body.appendChild(element);
+				element.click();
+				document.body.removeChild(element);
+			}
+			
+			document.getElementById('file').addEventListener('change', readFile, false);
+
+			function readFile (evt) {
+				var files = evt.target.files;
+				var file = files[0];           
+				var reader = new FileReader();
+				reader.onload = function() {
+					dataset = JSON.parse(this.result); 
+					var table = document.getElementsByTagName("BODY")[0].children[2].children[0];
+					console.log(dataset)
+					console.log(dataset.length)
+					console.log(table.rows.length)
+					while (table.rows.length < dataset.length + 2){
+						addChar(table.rows[table.rows.length-1].children[0].children[0])
+					}
+					for (var i = 0; i < dataset.length; i++){
+						row = table.rows[i+1]
+						row.children[0].children[0].value = 				dataset[i].name
+						row.children[0].children[2].value = 			dataset[i].initiative
+						row.children[0].children[3].value = 			dataset[i].recoilsupp
+						row.children[0].children[4].dataset.bullets = 	dataset[i].recoilbull
+						row.children[0].children[4].dataset.comp = 		dataset[i].recoilcomp
+						
+						var weaptable = row.children[2].children[0]
+						while (weaptable.rows.length < dataset[i].weapon.length + 1){
+							addWeapon(weaptable.rows[weaptable.rows.length-1].children[0].children[0])
+						}
+						for (var j = 0; j < dataset[i].weapon.length; j++){
+							var weaprow = weaptable.rows[j]
+							weaprow.children[0].children[0].value 		= dataset[i].weapon[j].weapname
+							weaprow.children[0].children[1].value 		= dataset[i].weapon[j].rounds
+							weaprow.children[0].children[2].value 		= dataset[i].weapon[j].weaprecoil
+							weaprow.children[0].children[1].dataset.max = dataset[i].weapon[j].clipsize
+
+						}		
+					}
+				}
+				reader.readAsText(file)
+			}
+			
+		</script>
+		
+		
+	</body>
+</html>
