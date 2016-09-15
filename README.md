@@ -7,6 +7,6 @@ All the prettiness comes from Bootstrap.
 
 
 ##Current Backlog:
-Action log
-Documentation
-Multiple Skins
+* Action log
+* Documentation
+* Multiple Skins
